@@ -16,4 +16,3 @@ const surveyJson = {
 };
 
 export default surveyJson;
-// (No debug console.log statements remain in this file)
