@@ -50,32 +50,34 @@ function customizePanelDynamicButtons(survey: Model) {
       };
 
       /**
+       * Helper to update the add button's appearance and accessibility state.
+       */
+      function setAddButtonState(btn: HTMLElement, atMax: boolean) {
+        btn.setAttribute('aria-disabled', atMax ? 'true' : 'false');
+        btn.setAttribute('tabindex', atMax ? '-1' : '0');
+        btn.setAttribute('aria-label', atMax ? 'Add Panel (disabled, max reached)' : 'Add Panel');
+        btn.classList.toggle('disabled-state', atMax);
+        btn.style.opacity = atMax ? '0.5' : '1';
+        btn.style.cursor = atMax ? 'not-allowed' : 'pointer';
+        btn.style.pointerEvents = atMax ? 'none' : 'auto';
+        if (atMax) {
+          btn.removeAttribute('onclick');
+        }
+      }
+
+      /**
        * Updates the add button's appearance and accessibility state
        * depending on whether the max panel count is reached.
        */
       const updateButtonState = () => {
         setTimeout(() => {
-          // Find the add button (supports both v2 and v3+ SurveyJS classnames)
           const element = document.querySelector(`[data-name="${panelDynamic.name}"]`);
-          if (element) {
-            const addButton = element.querySelector('.sv-paneldynamic__add-btn, .sd-paneldynamic__add-btn');
-            if (addButton) {
-              const btn = addButton as HTMLElement;
-              const atMax = panelDynamic.panelCount >= panelDynamic.maxPanelCount;
-
-              // Set all ARIA/accessibility and style attributes in one place
-              btn.setAttribute('aria-disabled', atMax ? 'true' : 'false');
-              btn.setAttribute('tabindex', atMax ? '-1' : '0');
-              btn.setAttribute('aria-label', atMax ? 'Add Panel (disabled, max reached)' : 'Add Panel');
-              btn.classList.toggle('disabled-state', atMax);
-              btn.style.opacity = atMax ? '0.5' : '1';
-              btn.style.cursor = atMax ? 'not-allowed' : 'pointer';
-              btn.style.pointerEvents = atMax ? 'none' : 'auto';
-              if (atMax) {
-                btn.removeAttribute('onclick');
-              }
-            }
-          }
+          if (!element) return;
+          const addButton = element.querySelector('.sv-paneldynamic__add-btn, .sd-paneldynamic__add-btn');
+          if (!addButton) return;
+          const btn = addButton as HTMLElement;
+          const atMax = panelDynamic.panelCount >= panelDynamic.maxPanelCount;
+          setAddButtonState(btn, atMax);
         }, 10);
       };
 
